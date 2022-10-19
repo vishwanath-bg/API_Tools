@@ -18,7 +18,7 @@ class device_information:
 
 
 # Importing device IP's from user file
-with open('IP_list') as f:
+with open('files/IP_list') as f:
         for ip in f:
                 temp = ip.strip("\n ")
                 ip = temp
