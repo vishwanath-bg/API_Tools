@@ -12,9 +12,9 @@ class api_info:
         self.IP = IP
         self.build = build
 
-    def get(self):
+    def get(self, username, password):
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-        auth = HTTPBasicAuth('admindb', 'dana123')
+        auth = HTTPBasicAuth(username, password)
         session = requests.Session()
         session.verify = False
 
@@ -23,32 +23,46 @@ class api_info:
             key = requests.get(f'https://{self.IP}/api/v1/auth', auth=auth, verify=False).json()
             list[ip] += key['api_key']
 
-        except requests.exceptions.ConnectTimeout:
-            print(f"{self.IP}Device is not pingable")
-            breakpoint()
-
-        else:
             auth_info = session.get(f"https://{self.IP}/api/v1/system/system-information", auth=(key['api_key'], ""))
             dictionary = auth_info.json()
             return dictionary
 
+        except requests.exceptions.ConnectTimeout:
+            print(f"{self.IP} Device is not pingable")
+
+        except TypeError:
+            print("not able to get information from device")
 
     def current(self, device):
-        print(f"current build of {device} :{self.build['software-inventory']['software']['build']}")
+        try:
+            print(f"current build of {device} :{self.build['software-inventory']['software']['build']}")
 
-    def Rollback(self, device):
-        print(f"Previous build of {device} :{self.build['rollback-partition-information']['build']}")
+        except TypeError:
+            print("not able to get information from device")
+
+    def rollback(self, device):
+        try:
+            print(f"Previous build of {device} :{self.build['rollback-partition-information']['build']}")
+
+        except TypeError:
+            print("not able to get information from device")
+
+        except KeyError:
+            print("Roll back version not available")
 
 
 # Importing device IP's from user file
-with open('files/IP_list') as f:
-    for ip in f:
-        temp = ip.strip("\n ")
-        ip = temp
+with open('files/IP_list') as file:
+    for line in file:
+        temp = (line.strip("\n ")).split(',')
+        ip = temp[0]
+        username = temp[1]
+        password = temp[2]
+        print(ip, username, password)
         x = api_info(ip, '')
-        info = api_info(ip, x.get())
+        info = api_info(ip, x.get(username, password))
         info.current(ip)
-        info.Rollback(ip)
+        info.rollback(ip)
         print("*" * 40)
 
 # if you need api keys just print "list" variable
