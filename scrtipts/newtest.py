@@ -51,7 +51,11 @@ class api_info:
             print("Roll back version not available")
 
     def machine_ID(self):
-        print(f"Machine ID: {self.build['system-information']['machine-id']}")
+        try:
+            print(f"Machine ID: {self.build['system-information']['machine-id']}")
+
+        except TypeError:
+            print("not able to get information from device")
 
 
 # Importing device IP's from user file
