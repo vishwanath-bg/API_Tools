@@ -50,6 +50,9 @@ class api_info:
         except KeyError:
             print("Roll back version not available")
 
+    def machine_ID(self):
+        print(f"Machine ID: {self.build['system-information']['machine-id']}")
+
 
 # Importing device IP's from user file
 with open('files/IP_list') as file:
@@ -58,11 +61,12 @@ with open('files/IP_list') as file:
         ip = temp[0]
         username = temp[1]
         password = temp[2]
-        print(ip, username, password)
+        print(f'Device IP: {ip}\nUSERNAME: {username}\nPassword: {password}')
         x = api_info(ip, '')
         info = api_info(ip, x.get(username, password))
         info.current(ip)
         info.rollback(ip)
+        info.machine_ID()
         print("*" * 40)
 
 # if you need api keys just print "list" variable
