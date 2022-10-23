@@ -35,7 +35,7 @@ class api_info:
 
     def current(self, device):
         try:
-            print(f"current build of {device} :{self.build['software-inventory']['software']['build']}")
+            print(f"Current build of {device} :{self.build['software-inventory']['software']['build']}")
 
         except TypeError:
             print("not able to get information from device")
