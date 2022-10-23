@@ -61,7 +61,7 @@ with open('files/IP_list') as file:
         ip = temp[0]
         username = temp[1]
         password = temp[2]
-        print(f'Device IP: {ip}\nUSERNAME: {username}\nPassword: {password}')
+        print(f'Device IP: {ip}\nUSERNAME: {username}\nPASSWORD: {password}')
         x = api_info(ip, '')
         info = api_info(ip, x.get(username, password))
         info.current(ip)
