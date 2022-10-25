@@ -8,22 +8,23 @@ list = defaultdict(str)
 
 # API_methods
 class api_info:
-    def __init__(self, IP, build):
+    def __init__(self, IP, username, password):
         self.IP = IP
-        self.build = build
+        self.username = username
+        self.password = password
 
-    def get(self, username, password):
+    def get(self):
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-        auth = HTTPBasicAuth(username, password)
+        auth = HTTPBasicAuth(self.username, self.password)
         session = requests.Session()
         session.verify = False
 
         try:
             # Generates key for particualr device
-            key = requests.get(f'https://{self.IP}/api/v1/auth', auth=auth, verify=False).json()
-            list[ip] += key['api_key']
+            self.key = requests.get(f'https://{self.IP}/api/v1/auth', auth=auth, verify=False).json()
+            list[ip] += self.key['api_key']
 
-            auth_info = session.get(f"https://{self.IP}/api/v1/system/system-information", auth=(key['api_key'], ""))
+            auth_info = session.get(f"https://{self.IP}/api/v1/system/system-information", auth=(self.key['api_key'], ""))
             dictionary = auth_info.json()
             return dictionary
 
@@ -35,14 +36,14 @@ class api_info:
 
     def current(self, device):
         try:
-            print(f"Current build of {device} :{self.build['software-inventory']['software']['build']}")
+            print(f"Current build of {device} :{self.key['software-inventory']['software']['build']}")
 
         except TypeError:
             print("not able to get information from device")
 
     def rollback(self, device):
         try:
-            print(f"Previous build of {device} :{self.build['rollback-partition-information']['build']}")
+            print(f"Previous build of {device} :{self.key['rollback-partition-information']['build']}")
 
         except TypeError:
             print("not able to get information from device")
@@ -52,7 +53,7 @@ class api_info:
 
     def machine_ID(self):
         try:
-            print(f"Machine ID: {self.build['system-information']['machine-id']}")
+            print(f"Machine ID: {self.key['system-information']['machine-id']}")
 
         except TypeError:
             print("not able to get information from device")
@@ -68,8 +69,7 @@ with open('files/IP_list') as file:
 
         # Device Information methods calling from class
         print(f'Device IP: {ip}\nUSERNAME: {username}\nPASSWORD: {password}')
-        x = api_info(ip, '')
-        info = api_info(ip, x.get(username, password))
+        info = api_info(ip, username, password)
         info.current(ip)
         info.rollback(ip)
         info.machine_ID()
