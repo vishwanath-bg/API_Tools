@@ -20,7 +20,7 @@ class api_info:
 
         try:
             # Generates key for particualr device
-            self.key = requests.get(f'https://{self.IP}/api/v1/auth', auth=auth, verify=False).json()
+            key = requests.get(f'https://{self.IP}/api/v1/auth', auth=auth, verify=False).json()
             list[ip] += key['api_key']
 
             auth_info = session.get(f"https://{self.IP}/api/v1/system/system-information", auth=(key['api_key'], ""))
